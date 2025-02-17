@@ -4,6 +4,8 @@
     { "path": "./tsconfig.node.json"}
   ],
   "compilerOptions": {
+    "outDir": "./build", // output the build files here
+    "rootDir": "./src",  // your source files will be in the src folder
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
