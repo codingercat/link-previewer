@@ -1,5 +1,6 @@
+// tailwind.config.js
+import tailwindcssAnimate from "tailwindcss-animate";
 /** @type {import('tailwindcss').Config} */
-import tailwindcssAnimate from 'tailwindcss-animate';
 
 export default {
 	plugins: [tailwindcssAnimate],
