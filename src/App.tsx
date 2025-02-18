@@ -43,10 +43,8 @@ function App() {
       setLoading(true);
       setData(null);
 
-      const { data } = await axios.post(
-        "http://localhost:5000/preview",
-        values,
-      );
+      const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/preview`, values);
+
       setData(data);
       form.setValue("url", "");
     } catch (err) {
