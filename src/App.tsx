@@ -1,12 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
+
+import { fetchData } from "./api";
+
 import { Loader } from "./components/shared/loader.tsx";
 import { Preview } from "./components/shared/preview.tsx";
 import { Button } from "./components/ui/button.tsx";
-
 import {
   Form,
   FormControl,
@@ -15,6 +17,8 @@ import {
   FormMessage,
 } from "./components/ui/form.tsx";
 import { Input } from "./components/ui/input.tsx";
+
+console.log("Backend URL:", import.meta.env.VITE_BACKEND_URL);
 
 export type DataType = {
   title: string;
@@ -37,6 +41,9 @@ function App() {
   },
 });
 
+useEffect(() => {
+  fetchData().then(setData);
+}, []);
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
     try {
