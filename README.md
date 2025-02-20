@@ -1,30 +1,63 @@
-# React + TypeScript + Vite
+# Link Previewer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple project to learn **web scraping** and **TypeScript**, inspired by the original repository [link-previewer](https://github.com/gkhan205/link-previewer) by [gkhan205](https://github.com/gkhan205). This project fetches metadata (title, description, and image) from a given URL using **Axios** and **Cheerio**.
 
-Currently, two official plugins are available:
+## Features
+- Fetches web page metadata (title, description, and preview image).
+- Uses **Cheerio** for web scraping.
+- Written in **TypeScript** for type safety.
+- Implements **Express.js** for API handling.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
+- **Node.js**
+- **Express.js**
+- **TypeScript**
+- **Axios**
+- **Cheerio**
 
-## Expanding the ESLint configuration
+## Installation & Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Prerequisites
+Make sure you have **Node.js** installed.
 
-- Configure the top-level `parserOptions` property like this:
+### Steps
+1. Clone this repository:
+   ```sh
+   git clone https://github.com/your-username/link-previewer.git
+   cd link-previewer
+   ```
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+3. Start the server:
+   ```sh
+   npm run dev
+   ```
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+## API Usage
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Endpoint: `/api/preview`
+- **Method:** POST
+- **Request Body:**
+  ```json
+  {
+    "url": "https://example.com"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "title": "Example Title",
+    "description": "Example Description",
+    "image": "https://example.com/image.jpg"
+  }
+  ```
+
+## License
+This project is for learning purposes and follows the license terms of the original [link-previewer](https://github.com/gkhan205/link-previewer).
+
+## Acknowledgments
+- Original Creator: [gkhan205](https://github.com/gkhan205)
+- Inspired by web scraping projects using Cheerio and Axios.
+
