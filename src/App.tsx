@@ -17,7 +17,6 @@ import {
 } from "./components/ui/form.tsx";
 import { Input } from "./components/ui/input.tsx";
 
-// Replace the existing BACKEND_URL with this
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export type DataType = {
@@ -47,9 +46,6 @@ function App() {
       setLoading(true);
       setData(null);
       setError(null);
-
-      console.log('Sending request to:', `${BACKEND_URL}/preview`);
-      console.log('Request data:', values);
 
       const response = await axios.post(`${BACKEND_URL}/preview`, values);
       
