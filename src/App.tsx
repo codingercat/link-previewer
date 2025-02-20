@@ -18,6 +18,7 @@ import {
 } from "./components/ui/form.tsx";
 import { Input } from "./components/ui/input.tsx";
 
+
 console.log("Backend URL:", import.meta.env.VITE_BACKEND_URL);
 
 export type DataType = {
@@ -45,21 +46,24 @@ useEffect(() => {
   fetchData().then(setData);
 }, []);
 
-  const onSubmit = async (values: z.infer<typeof schema>) => {
-    try {
-      setLoading(true);
-      setData(null);
+const onSubmit = async (values: z.infer<typeof schema>) => {
+  try {
+    setLoading(true);
+    setData(null);
 
-      const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/preview`, values);
+    const { data } = await axios.post("https://link-previewer-4bwb.onrender.com/preview", values, {
+      headers: { "Content-Type": "application/json" }
+    });
 
-      setData(data);
-      form.setValue("url", "");
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    console.log("✅ API Response:", data);
+    setData(data);
+    form.setValue("url", "");
+  } catch (err) {
+    console.error("❌ Axios Error:", err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex flex-col items-center w-full lg:w-1/2 mx-auto p-10">

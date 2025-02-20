@@ -8,36 +8,32 @@ const schema = object( {
 
 
 const getUrlPreview = async (req, res) => {
-    try{
-        const value = await schema.validate(req.body);
+  try {
+      const { url } = req.body;
 
-        const { data } = await axios.get(value.url);
-        const $ = cheerio.load(data);
+      if (!url) {
+          console.error("❌ Error: No URL provided in request.");
+          return res.status(400).json({ error: "URL is required" });
+      }
 
-        const title =
-      $('meta[property="og:title"]').attr("content") || $("title").text();
-    const description =
-      $('meta[property="og:description"]').attr("content") ||
-      $('meta[property="description"]').attr("content");
-    const image =
-      $('meta[property="og:image"]').attr("content") ||
-      $("img").first().attr("src");
-    
-        const previewData = {
-            title : title || "No title available",
-            description: description || 'No description available', 
-                image: image || 'No image available',
-        };
+      console.log(`🔎 Fetching preview for: ${url}`);
 
-        return res.status(200).json(previewData);
-    } catch(err){
-        if(err instanceof ValidationError){
-          return res.status(422).send(err.message);
-        }
+      const response = await axios.get(url, { timeout: 5000 }); // Add timeout to prevent long waits
+      console.log(`✅ Fetched response with status: ${response.status}`);
 
-        console.log(err);
-        return res.status(500).send('Something went wrong!');
-    }
+      const $ = cheerio.load(response.data);
+      const title = $("title").text() || "No Title";
+      const description =
+          $('meta[name="description"]').attr("content") || "No Description";
+      const image = $('meta[property="og:image"]').attr("content") || "";
+
+      console.log(`📝 Extracted: title=${title}, description=${description}, image=${image}`);
+
+      res.json({ title, description, image });
+  } catch (error) {
+      console.error("❌ Error fetching URL preview:", error);
+      res.status(500).json({ error: "Something went wrong!", details: error.message });
+  }
 };
 
 module.exports = {
