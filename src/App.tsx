@@ -18,7 +18,7 @@ import {
 import { Input } from "./components/ui/input.tsx";
 
 // Replace the existing BACKEND_URL with this
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export type DataType = {
   title: string;
