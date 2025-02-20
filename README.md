@@ -1,6 +1,6 @@
 # Link Previewer
 
-A simple project to learn **web scraping** and **TypeScript**, inspired by the original repository [link-previewer](https://github.com/gkhan205/link-previewer) by [gkhan205](https://github.com/gkhan205). This project fetches metadata (title, description, and image) from a given URL using **Axios** and **Cheerio**.
+A simple project to learn **web scraping** and **TypeScript**. This project fetches metadata (title, description, and image) from a given URL using **Axios** and **Cheerio**.
 
 ## Features
 - Fetches web page metadata (title, description, and preview image).
