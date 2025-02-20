@@ -1,13 +1,12 @@
+// src/App.tsx
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
 
-import { fetchData } from "./api";
-
-import { Loader } from "./components/shared/loader.tsx";
 import { Preview } from "./components/shared/preview.tsx";
+import { Loader } from "./components/shared/loader.tsx";
 import { Button } from "./components/ui/button.tsx";
 import {
   Form,
@@ -18,8 +17,9 @@ import {
 } from "./components/ui/form.tsx";
 import { Input } from "./components/ui/input.tsx";
 
-
-console.log("Backend URL:", import.meta.env.VITE_BACKEND_URL);
+const BACKEND_URL = import.meta.env.NODE_ENV === 'production' 
+  ? 'https://link-previewer-4bwb.onrender.com'  
+  : 'http://localhost:5000';
 
 export type DataType = {
   title: string;
@@ -28,42 +28,49 @@ export type DataType = {
 };
 
 const schema = z.object({
-  url: z.string().url(),
+  url: z.string().url("Please enter a valid URL"),
 });
 
 function App() {
   const [isLoading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<DataType | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof schema>>({
-  resolver: zodResolver(schema),
-  defaultValues: {
-    url: "", // Ensures the input starts as a controlled component
-  },
-});
+    resolver: zodResolver(schema),
+    defaultValues: {
+      url: "",
+    },
+  });
 
-useEffect(() => {
-  fetchData().then(setData);
-}, []);
+  const onSubmit = async (values: z.infer<typeof schema>) => {
+    try {
+      setLoading(true);
+      setData(null);
+      setError(null);
 
-const onSubmit = async (values: z.infer<typeof schema>) => {
-  try {
-    setLoading(true);
-    setData(null);
+      console.log('Sending request to:', `${BACKEND_URL}/preview`);
+      console.log('Request data:', values);
 
-    const { data } = await axios.post("https://link-previewer-4bwb.onrender.com/preview", values, {
-      headers: { "Content-Type": "application/json" }
-    });
-
-    console.log("✅ API Response:", data);
-    setData(data);
-    form.setValue("url", "");
-  } catch (err) {
-    console.error("❌ Axios Error:", err);
-  } finally {
-    setLoading(false);
-  }
-};
+      const response = await axios.post(`${BACKEND_URL}/preview`, values);
+      
+      console.log('Response:', response.data);
+      
+      if (response.data) {
+        setData(response.data);
+        form.reset();
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || err.message);
+      } else {
+        setError("An unexpected error occurred");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center w-full lg:w-1/2 mx-auto p-10">
@@ -75,20 +82,28 @@ const onSubmit = async (values: z.infer<typeof schema>) => {
           className="flex w-full gap-2 items-center mb-10"
         >
           <FormField
+            control={form.control}
+            name="url"
             render={({ field }) => (
               <FormItem className="flex-1">
                 <FormControl>
-                  <Input {...field} placeholder="Enter Url" />
+                  <Input {...field} placeholder="Enter URL (e.g., https://example.com)" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
-            name="url"
-            control={form.control}
           />
-          <Button type="submit">Generate</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? 'Generating...' : 'Generate'}
+          </Button>
         </form>
       </Form>
+
+      {error && (
+        <div className="text-red-500 mb-4 p-4 bg-red-50 rounded-md">
+          {error}
+        </div>
+      )}
 
       {isLoading && <Loader />}
 
@@ -98,6 +113,10 @@ const onSubmit = async (values: z.infer<typeof schema>) => {
           description={data.description}
           image={data.image}
         />
+      )}
+
+      {data && !data.image && (
+        <p className="text-gray-500 mt-2">No preview image available for this URL</p>
       )}
     </div>
   );

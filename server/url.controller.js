@@ -1,39 +1,41 @@
-const axios = require ("axios");
+// server/url.controller.js
+const axios = require("axios");
 const cheerio = require("cheerio");
-const { object, string, ValidationError } = require("yup");
-
-const schema = object( {
-    url: string().url().required(),
-});
-
 
 const getUrlPreview = async (req, res) => {
-  try {
-      const { url } = req.body;
+    try {
+        console.log("Processing preview request for URL:", req.body.url);
+        const { url } = req.body;
 
-      if (!url) {
-          console.error("❌ Error: No URL provided in request.");
-          return res.status(400).json({ error: "URL is required" });
-      }
+        if (!url) {
+            console.log("No URL provided");
+            return res.status(400).json({ error: "URL is required" });
+        }
 
-      console.log(`🔎 Fetching preview for: ${url}`);
+        console.log(`Fetching URL: ${url}`);
+        
+        const response = await axios.get(url, {
+            timeout: 5000,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+        });
 
-      const response = await axios.get(url, { timeout: 5000 }); // Add timeout to prevent long waits
-      console.log(`✅ Fetched response with status: ${response.status}`);
+        console.log("Successfully fetched URL");
 
-      const $ = cheerio.load(response.data);
-      const title = $("title").text() || "No Title";
-      const description =
-          $('meta[name="description"]').attr("content") || "No Description";
-      const image = $('meta[property="og:image"]').attr("content") || "";
+        const $ = cheerio.load(response.data);
+        
+        const title = $("title").text() || "No Title";
+        const description = $('meta[name="description"]').attr("content") || "No Description";
+        const image = $('meta[property="og:image"]').attr("content") || "";
 
-      console.log(`📝 Extracted: title=${title}, description=${description}, image=${image}`);
+        console.log("Extracted data:", { title, description, image });
 
-      res.json({ title, description, image });
-  } catch (error) {
-      console.error("❌ Error fetching URL preview:", error);
-      res.status(500).json({ error: "Something went wrong!", details: error.message });
-  }
+        res.json({ title, description, image });
+    } catch (error) {
+        console.error("Error in getUrlPreview:", error.message);
+        res.status(500).json({ error: error.message });
+    }
 };
 
 module.exports = {
