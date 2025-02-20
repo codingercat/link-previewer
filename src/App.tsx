@@ -17,9 +17,8 @@ import {
 } from "./components/ui/form.tsx";
 import { Input } from "./components/ui/input.tsx";
 
-const BACKEND_URL = import.meta.env.NODE_ENV === 'production' 
-  ? 'https://link-previewer-4bwb.onrender.com'  
-  : 'http://localhost:5000';
+// Replace the existing BACKEND_URL with this
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
 export type DataType = {
   title: string;
